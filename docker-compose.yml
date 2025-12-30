@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  downloader:
+    build:
+      context: ./downloader
+      dockerfile: Dockerfile
+    image: webtoon-downloader
+    container_name: webtoon-downloader
+    volumes:
+      - downloads:/app/downloads
+
   backend:
     build:
       context: ./backend
@@ -11,10 +20,15 @@ services:
     volumes:
       - ./backend/prisma:/app/prisma
       - backend-db:/app/prisma
+      - downloads:/app/downloads
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:./dev.db
+      - DOWNLOADS_PATH=/app/downloads
     restart: unless-stopped
+    depends_on:
+      - downloader
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
       interval: 30s
@@ -35,4 +49,6 @@ services:
 
 volumes:
   backend-db:
+    driver: local
+  downloads:
     driver: local

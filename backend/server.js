@@ -1,10 +1,15 @@
 import express from 'express'
 import cors from 'cors'
 import { PrismaClient } from '@prisma/client'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+
+const execAsync = promisify(exec)
 
 const app = express()
 const prisma = new PrismaClient()
 const PORT = process.env.PORT || 3001
+const DOWNLOADS_PATH = process.env.DOWNLOADS_PATH || '/app/downloads'
 
 // Middleware
 app.use(cors())
@@ -66,6 +71,9 @@ app.post('/api/downloads', async (req, res) => {
         endChapter: endChapter ? parseInt(endChapter) : null
       }
     })
+
+    // Start the download process asynchronously
+    processDownload(download.id, url, startChapter, endChapter)
     
     res.status(201).json(download)
   } catch (error) {
@@ -73,6 +81,61 @@ app.post('/api/downloads', async (req, res) => {
     res.status(500).json({ error: 'Failed to create download' })
   }
 })
+
+// Download processor function
+async function processDownload(downloadId, url, startChapter, endChapter) {
+  try {
+    // Update status to downloading
+    await prisma.download.update({
+      where: { id: downloadId },
+      data: { status: 'downloading', progress: 0 }
+    })
+
+    let command = `docker run --rm -v ${DOWNLOADS_PATH}:/app/downloads webtoon-downloader -o /app/downloads`
+    
+    if (startChapter && endChapter) {
+      command += ` --start ${startChapter} --end ${endChapter}`
+    }
+    
+    command += ` "${url}"`
+
+    console.log(`[Download ${downloadId}] Executing:`, command)
+
+    // Execute the download command
+    const { stdout, stderr } = await execAsync(command, {
+      maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+    })
+
+    if (stderr) {
+      console.error(`[Download ${downloadId}] stderr:`, stderr)
+    }
+
+    console.log(`[Download ${downloadId}] stdout:`, stdout)
+
+    // Update to completed
+    await prisma.download.update({
+      where: { id: downloadId },
+      data: { 
+        status: 'completed', 
+        progress: 100,
+        completedAt: new Date()
+      }
+    })
+
+    console.log(`[Download ${downloadId}] Completed successfully`)
+  } catch (error) {
+    console.error(`[Download ${downloadId}] Failed:`, error)
+    
+    // Update to failed with error message
+    await prisma.download.update({
+      where: { id: downloadId },
+      data: { 
+        status: 'failed', 
+        error: error.message 
+      }
+    })
+  }
+}
 
 // Update a download (status, progress, etc.)
 app.patch('/api/downloads/:id', async (req, res) => {

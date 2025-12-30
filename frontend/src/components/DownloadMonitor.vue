@@ -117,7 +117,7 @@ const handleDelete = () => {
     </div>
     
     <!-- Empty State -->
-    <div v-else-if="downloads.length === 0" class="text-center py-16">
+    <div v-else-if="downloads.length === 0" class="text-center">
       <Card class="border-dashed">
         <CardContent class="pt-6 pb-6">
           <DownloadIcon class="mx-auto h-12 w-12 text-muted-foreground mb-4" />
