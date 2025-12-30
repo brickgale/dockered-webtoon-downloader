@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { Moon, Sun } from 'lucide-vue-next'
-import Button from './ui/Button.vue'
+import { Button } from './ui/button'
 
 const isDark = ref(false)
 

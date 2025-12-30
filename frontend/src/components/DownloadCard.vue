@@ -1,10 +1,9 @@
 <script setup>
 import { Clock, CheckCircle2, XCircle, Loader2, Trash2 } from 'lucide-vue-next'
-import Card from './ui/Card.vue'
-import CardContent from './ui/CardContent.vue'
-import Badge from './ui/Badge.vue'
-import Button from './ui/Button.vue'
-import Progress from './ui/Progress.vue'
+import { Card, CardContent } from './ui/card'
+import { Badge } from './ui/badge'
+import { Button } from './ui/button'
+import { Progress } from './ui/progress'
 
 const props = defineProps({
   download: {

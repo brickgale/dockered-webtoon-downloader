@@ -1,14 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import { Download } from 'lucide-vue-next'
-import Card from './ui/Card.vue'
-import CardHeader from './ui/CardHeader.vue'
-import CardTitle from './ui/CardTitle.vue'
-import CardDescription from './ui/CardDescription.vue'
-import CardContent from './ui/CardContent.vue'
-import Button from './ui/Button.vue'
-import Input from './ui/Input.vue'
-import Label from './ui/Label.vue'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
 
 const emit = defineEmits(['add-download'])
 
@@ -42,7 +38,7 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <Card class="flex-[0_0_35%] min-w-[320px]">
+  <Card class="flex-[0_0_35%] min-w-[320px] self-start sticky top-8">
     <CardHeader>
       <CardTitle>Add New Download</CardTitle>
       <CardDescription>

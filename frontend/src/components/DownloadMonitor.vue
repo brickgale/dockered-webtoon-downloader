@@ -1,21 +1,19 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { Clock, CheckCircle2, XCircle, Loader2, Download as DownloadIcon } from 'lucide-vue-next'
-import Card from './ui/Card.vue'
-import CardContent from './ui/CardContent.vue'
-import Badge from './ui/Badge.vue'
-import Tabs from './ui/Tabs.vue'
-import TabsList from './ui/TabsList.vue'
-import TabsTrigger from './ui/TabsTrigger.vue'
-import TabsContent from './ui/TabsContent.vue'
-import Separator from './ui/Separator.vue'
-import ScrollArea from './ui/ScrollArea.vue'
-import AlertDialog from './ui/AlertDialog.vue'
-import AlertDialogContent from './ui/AlertDialogContent.vue'
-import AlertDialogTitle from './ui/AlertDialogTitle.vue'
-import AlertDialogDescription from './ui/AlertDialogDescription.vue'
-import AlertDialogCancel from './ui/AlertDialogCancel.vue'
-import AlertDialogAction from './ui/AlertDialogAction.vue'
+import { Card, CardContent } from './ui/card'
+import { Badge } from './ui/badge'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs'
+import { Separator } from './ui/separator'
+import { ScrollArea } from './ui/scroll-area'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction
+} from './ui/alert-dialog'
 import DownloadCard from './DownloadCard.vue'
 
 const props = defineProps({
