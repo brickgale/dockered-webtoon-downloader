@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Download {
+  id            Int       @id @default(autoincrement())
+  url           String
+  status        String    // queued, downloading, completed, failed
+  progress      Float     @default(0)
+  chapters      String?
+  startChapter  Int?
+  endChapter    Int?
+  error         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  completedAt   DateTime?
+}

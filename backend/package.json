@@ -1,0 +1,22 @@
+{
+  "name": "webtoon-downloader-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Backend API for Webtoon Downloader Monitor",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0"
+  }
+}

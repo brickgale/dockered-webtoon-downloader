@@ -2,10 +2,16 @@
 
 A Docker containerized version of the [Webtoon Downloader](https://github.com/Zehina/Webtoon-Downloader) for downloading comics from webtoons.com.
 
+✅ **Successfully tested** - Downloads Tower of God Chapter 1 (8 images)  
+🐍 **Uses pipx** - Isolated Python environment for clean installations  
+📦 **Ready to use** - Pre-built Docker container with all dependencies  
+🖥️ **Web Monitor** - Vue 3 + Vite frontend for monitoring downloads  
+
 ## Prerequisites
 
 - Docker installed on your system
 - Internet connection
+- Node.js and npm (for running the web monitor)
 
 ## Setup Commands
 
@@ -24,10 +30,26 @@ docker images | grep webtoon-downloader
 ### 3. Test the Installation
 
 ```bash
+docker run --rm webtoon-downloader --version
+```
+
+Expected output: `webtoon-downloader, version 1.9.4`
+
+```bash
 docker run --rm webtoon-downloader --help
 ```
 
 ## Usage
+
+### Quick Start - Download Sample Chapter
+
+```bash
+# Create downloads directory
+mkdir -p downloads
+
+# Download Tower of God Chapter 1 (tested and working)
+docker run --rm -v $(pwd)/downloads:/app/downloads webtoon-downloader -o /app/downloads --start 1 --end 1 "https://www.webtoons.com/en/fantasy/tower-of-god/list?title_no=95"
+```
 
 ### Basic Download Commands
 
@@ -94,13 +116,101 @@ docker run --rm -v $(pwd)/downloads:/app/downloads webtoon-downloader -o /app/do
 docker run --rm -v $(pwd)/downloads:/app/downloads webtoon-downloader -o /app/downloads --export-metadata --export-format json "https://www.webtoons.com/en/fantasy/tower-of-god/list?title_no=95"
 ```
 
+## Web Monitor
+
+A Vue 3 + Vite web interface with Node.js + Prisma backend for monitoring downloads in real-time and tracking download history.
+
+### 🐳 Docker Setup (Recommended)
+
+**Production:**
+```bash
+docker-compose up -d
+```
+
+Access the app at http://localhost:8080
+
+**Development (with hot reload):**
+```bash
+docker-compose -f docker-compose.dev.yml up
+```
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3001
+
+**Stop services:**
+```bash
+docker-compose down
+```
+
+### 💻 Local Setup (Alternative)
+
+**Backend:**
+```bash
+cd backend
+npm install
+npm run prisma:generate
+npm run prisma:migrate
+npm run dev
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Features
+
+- 📥 Add download URLs with optional chapter ranges
+- 📊 Real-time download progress monitoring
+- ✅ Track completed downloads
+- ❌ Monitor failed downloads
+- 🗑️ Remove downloads from queue
+- 💾 Persistent download history with SQLite database
+- 📈 Download statistics
+- 🌓 Dark/Light mode with theme persistence
+
+For more details:
+- Frontend: [frontend/README.md](frontend/README.md)
+- Backend: [backend/README.md](backend/README.md)
+
 ## Directory Structure
 
 ```
 webtoon-downloader/
-├── Dockerfile
+├── Dockerfile          # Uses pipx for isolated installation
 ├── README.md
-└── downloads/          # Your downloaded comics will appear here
+├── .gitignore          # Excludes downloads/ from version control
+├── backend/            # Node.js + Express + Prisma API
+│   ├── prisma/
+│   │   └── schema.prisma
+│   ├── server.js
+│   ├── package.json
+│   └── README.md
+├── frontend/           # Vue 3 + Vite web monitor
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ui/            # shadcn-vue components
+│   │   │   ├── DownloadInput.vue
+│   │   │   ├── DownloadMonitor.vue
+│   │   │   └── ThemeToggle.vue
+│   │   ├── services/
+│   │   │   └── api.js         # API service layer
+│   │   ├── lib/
+│   │   │   └── utils.js
+│   │   ├── App.vue
+│   │   ├── main.js
+│   │   └── style.css
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── tailwind.config.js
+└── downloads/          # Your downloaded comics appear here (git-ignored)
+    ├── 001_1.jpg       # Chapter images (if no --separate flag)
+    ├── 001_2.jpg
+    └── ...
+    # OR with --separate flag:
     └── [Series Name]/
         ├── Chapter 1/
         ├── Chapter 2/
@@ -140,12 +250,25 @@ chmod -R 755 downloads/
 docker run -it --rm -v $(pwd)/downloads:/app/downloads --entrypoint /bin/bash webtoon-downloader
 ```
 
+## Technical Details
+
+### Installation Method
+- **pipx**: Uses isolated Python environments (cleaner than system pip)
+- **Dependencies**: Automatically handles all required packages
+- **Version**: Currently installs webtoon-downloader v1.9.4
+
+### File Organization
+- **Default**: Images saved directly to downloads/ (001_1.jpg, 001_2.jpg, etc.)
+- **With --separate**: Creates organized folder structure by series/chapter
+- **Git ignored**: downloads/ folder excluded from version control
+
 ## Notes
 
 - Downloads are saved to the `downloads/` folder in your current directory
 - The container runs as root, so downloaded files may need permission adjustments
 - Large series downloads can take significant time and bandwidth
 - Always respect the website's terms of service and rate limits
+- **Tested working**: Successfully downloads Tower of God and other official webtoons
 
 ## License
 
